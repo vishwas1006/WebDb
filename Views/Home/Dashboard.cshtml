@@ -1,0 +1,152 @@
+﻿
+<h2>Dashboard</h2>
+
+@if (TempData["Success"] != null)
+{
+    <p style="color:green">@TempData["Success"]</p>
+}
+
+<form method="post">
+
+    <!-- Schema -->
+    <select name="schema" onchange="this.form.submit()">
+        <option value="">Select Schema</option>
+
+        @if (ViewBag.Schemas != null)
+        {
+            foreach (var s in ViewBag.Schemas)
+            {
+                <option value="@s" selected="@(s == ViewBag.SelectedSchema ? "selected" : null)">
+                    @s
+                </option>
+            }
+        }
+    </select>
+
+    <!-- Table -->
+    <select name="table">
+        <option value="">Select Table</option>
+
+        @if (ViewBag.Tables != null)
+        {
+            foreach (var t in ViewBag.Tables)
+            {
+                <option value="@t" selected="@(t == ViewBag.SelectedTable ? "selected" : null)">
+                    @t
+                </option>
+            }
+        }
+    </select>
+
+    <!-- Operation -->
+    <select name="operation">
+        <option value="">Select Operation</option>
+        <option value="select" selected="@(ViewBag.Operation == "select" ? "selected" : null)">Select</option>
+        <option value="insert" selected="@(ViewBag.Operation == "insert" ? "selected" : null)">Insert</option>
+        <option value="update" selected="@(ViewBag.Operation == "update" ? "selected" : null)">Update</option>
+        <option value="delete" selected="@(ViewBag.Operation == "delete" ? "selected" : null)">Delete</option>
+    </select>
+
+    <button type="submit">Go</button>
+
+</form>
+
+    @if (ViewBag.Operation == "insert" && ViewBag.Columns != null)
+{
+    <h3>Insert Data</h3>
+
+    <form method="post">
+        <input type="hidden" name="schema" value="@ViewBag.SelectedSchema"/>
+        <input type="hidden" name="table" value="@ViewBag.SelectedTable"/>
+        <input type="hidden" name="operation" value="insertdata"/>
+
+        @foreach(var col in ViewBag.Columns)
+            {
+                <div>
+                    <label>@col</label>
+                    <input type="text" name="@col"/>
+                </div>
+            }
+            <button type="submit">Insert</button>
+        </form>
+}
+
+@if(ViewBag.Operation=="delete" && ViewBag.Columns != null)
+{
+    <h3>Delete record</h3>
+
+    <form method="post">
+        <input type="hidden" name="schema" value="@ViewBag.SelectedSchema"/>
+        <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
+        <input type="hidden" name="operation" value="deletedata" />
+
+        <label>Enter Id</label>
+        <input type="text" name="id"/>
+
+        <button type="submit">Delete</button>
+    </form>
+}
+
+
+@if (ViewBag.Operation == "update" && ViewBag.Columns != null)
+{
+    <h3>Update Record</h3>
+    
+    <form method="post">
+        <input type="hidden" name="schema" value="@ViewBag.SelectedSchema" />
+        <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
+        <input type="hidden" name="operation" value="insertdata" />
+
+
+        <label>ID:</label>
+        <input type="text" name="id" />
+
+        <label>Column</label>
+        <select name="column">
+            @foreach(var col in ViewBag.Columns)
+                {
+                    <option value="@col">@col</option>
+                }
+            </select>
+        
+            <label>New Value</label>
+            <input type="text" name="value" />
+
+            <button type="submit">Update</button>
+        </form>
+}
+
+
+<!--  SHOW DATA -->
+@if (ViewBag.Rows != null && ViewBag.Rows.Count > 0)
+{
+    <h3>Table Data</h3>
+
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                @foreach (var col in ViewBag.Rows[0].Keys)
+                {
+                    <th>@col</th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var row in ViewBag.Rows)
+            {
+                <tr>
+                    @foreach (var val in row.Values)
+                    {
+                        <td>@val</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (ViewBag.Operation == "select")
+{
+    <p>No data found</p>
+}
+

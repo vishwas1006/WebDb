@@ -1,0 +1,15 @@
+﻿@model WebDB.Models.DbConnectionModel
+
+<h2>Connect to Database</h2>
+
+<form method="post">
+
+    <input asp-for="Host" placeholder="Host"/>
+    <input asp-for="Database" placeholder="Database" />
+    <input asp-for="User" placeholder="User" />
+    <input asp-for="Password" placeholder="Password" />
+
+    <button type="submit">Connect</button>
+</form>
+
+<p style="color:red">@ViewBag.Error</p>
