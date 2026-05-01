@@ -1,152 +1,195 @@
-﻿
-<h2>Dashboard</h2>
+﻿@{
+    ViewData["Title"] = "Database Dashboard";
+}
+
+
+    
+<h2 class="mb-4 fw-bold">Dashboard</h2>
 
 @if (TempData["Success"] != null)
 {
-    <p style="color:green">@TempData["Success"]</p>
+    <div class="alert alert-success">@TempData["Success"]</div>
 }
 
-<form method="post">
-
-    <!-- Schema -->
-    <select name="schema" onchange="this.form.submit()">
-        <option value="">Select Schema</option>
-
-        @if (ViewBag.Schemas != null)
-        {
-            foreach (var s in ViewBag.Schemas)
-            {
-                <option value="@s" selected="@(s == ViewBag.SelectedSchema ? "selected" : null)">
-                    @s
-                </option>
-            }
-        }
-    </select>
-
-    <!-- Table -->
-    <select name="table">
-        <option value="">Select Table</option>
-
-        @if (ViewBag.Tables != null)
-        {
-            foreach (var t in ViewBag.Tables)
-            {
-                <option value="@t" selected="@(t == ViewBag.SelectedTable ? "selected" : null)">
-                    @t
-                </option>
-            }
-        }
-    </select>
-
-    <!-- Operation -->
-    <select name="operation">
-        <option value="">Select Operation</option>
-        <option value="select" selected="@(ViewBag.Operation == "select" ? "selected" : null)">Select</option>
-        <option value="insert" selected="@(ViewBag.Operation == "insert" ? "selected" : null)">Insert</option>
-        <option value="update" selected="@(ViewBag.Operation == "update" ? "selected" : null)">Update</option>
-        <option value="delete" selected="@(ViewBag.Operation == "delete" ? "selected" : null)">Delete</option>
-    </select>
-
-    <button type="submit">Go</button>
-
-</form>
-
-    @if (ViewBag.Operation == "insert" && ViewBag.Columns != null)
+@if (ViewBag.Error != null)
 {
-    <h3>Insert Data</h3>
-
-    <form method="post">
-        <input type="hidden" name="schema" value="@ViewBag.SelectedSchema"/>
-        <input type="hidden" name="table" value="@ViewBag.SelectedTable"/>
-        <input type="hidden" name="operation" value="insertdata"/>
-
-        @foreach(var col in ViewBag.Columns)
-            {
-                <div>
-                    <label>@col</label>
-                    <input type="text" name="@col"/>
-                </div>
-            }
-            <button type="submit">Insert</button>
-        </form>
+    <div class="alert alert-danger">@ViewBag.Error</div>
 }
 
-@if(ViewBag.Operation=="delete" && ViewBag.Columns != null)
-{
-    <h3>Delete record</h3>
+<!-- 🔥 CONTROL PANEL -->
+<div class="card p-4 mb-4 shadow-sm">
+    <form method="post" class="row g-3 align-items-end">
 
-    <form method="post">
-        <input type="hidden" name="schema" value="@ViewBag.SelectedSchema"/>
-        <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
-        <input type="hidden" name="operation" value="deletedata" />
-
-        <label>Enter Id</label>
-        <input type="text" name="id"/>
-
-        <button type="submit">Delete</button>
-    </form>
-}
-
-
-@if (ViewBag.Operation == "update" && ViewBag.Columns != null)
-{
-    <h3>Update Record</h3>
-    
-    <form method="post">
-        <input type="hidden" name="schema" value="@ViewBag.SelectedSchema" />
-        <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
-        <input type="hidden" name="operation" value="insertdata" />
-
-
-        <label>ID:</label>
-        <input type="text" name="id" />
-
-        <label>Column</label>
-        <select name="column">
-            @foreach(var col in ViewBag.Columns)
+        <div class="col-md-3">
+            <label class="form-label">Schema</label>
+            <select name="schema" class="form-select" onchange="this.form.submit()">
+                <option value="">Select Schema</option>
+                @foreach (var s in ViewBag.Schemas)
                 {
-                    <option value="@col">@col</option>
+                    <option value="@s" selected="@(s == ViewBag.SelectedSchema ? "selected" : null)">
+                        @s
+                    </option>
                 }
             </select>
-        
-            <label>New Value</label>
-            <input type="text" name="value" />
+        </div>
 
-            <button type="submit">Update</button>
+        <div class="col-md-3">
+            <label class="form-label">Table</label>
+            <select name="table" class="form-select">
+                <option value="">Select Table</option>
+                @if (ViewBag.Tables != null)
+                {
+                    foreach (var t in ViewBag.Tables)
+                    {
+                        <option value="@t" selected="@(t == ViewBag.SelectedTable ? "selected" : null)">
+                            @t
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Operation</label>
+            <select name="operation" class="form-select">
+                <option value="">Select Operation</option>
+                <option value="select" selected="@(ViewBag.Operation == "select" ? "selected" : null)">Select</option>
+                <option value="insert" selected="@(ViewBag.Operation == "insert" ? "selected" : null)">Insert</option>
+                <option value="update" selected="@(ViewBag.Operation == "update" ? "selected" : null)">Update</option>
+                <option value="delete" selected="@(ViewBag.Operation == "delete" ? "selected" : null)">Delete</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button class="btn btn-dark w-100">Execute</button>
+        </div>
+
+    </form>
+</div>
+
+<!-- 🔥 INSERT -->
+@if (ViewBag.Operation == "insert" && ViewBag.Columns != null)
+{
+    <div class="card p-4 mb-4 shadow-sm">
+        <h5>Insert Data</h5>
+
+        <form method="post" class="row g-3">
+            <input type="hidden" name="schema" value="@ViewBag.SelectedSchema" />
+            <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
+            <input type="hidden" name="operation" value="insertdata" />
+
+            @foreach (var col in ViewBag.Columns)
+            {
+                <div class="col-md-4">
+                    <label class="form-label">@col</label>
+                    <input class="form-control" name="@col" />
+                </div>
+            }
+
+            <div class="col-12 text-end">
+                <button class="btn btn-success">Insert</button>
+            </div>
         </form>
+    </div>
 }
 
+<!-- 🔥 DELETE -->
+@if (ViewBag.Operation == "delete")
+{
+    <div class="card p-4 mb-4 shadow-sm">
+        <h5>Delete Record</h5>
 
-<!--  SHOW DATA -->
+        <form method="post" class="row g-3">
+            <input type="hidden" name="schema" value="@ViewBag.SelectedSchema" />
+            <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
+            <input type="hidden" name="operation" value="deletedata" />
+
+            <div class="col-md-6">
+                <label class="form-label">Enter ID</label>
+                <input class="form-control" name="id" />
+            </div>
+
+            <div class="col-12 text-end">
+                <button class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+}
+
+<!-- 🔥 UPDATE -->
+@if (ViewBag.Operation == "update" && ViewBag.Columns != null)
+{
+    <div class="card p-4 mb-4 shadow-sm">
+        <h5>Update Record</h5>
+
+        <form method="post" class="row g-3">
+            <input type="hidden" name="schema" value="@ViewBag.SelectedSchema" />
+            <input type="hidden" name="table" value="@ViewBag.SelectedTable" />
+            <input type="hidden" name="operation" value="updatedata" />
+
+            <div class="col-md-3">
+                <label class="form-label">ID</label>
+                <input class="form-control" name="id" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Column</label>
+                <select name="column" class="form-select">
+                    @foreach (var col in ViewBag.Columns)
+                    {
+                        <option value="@col">@col</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-5">
+                <label class="form-label">New Value</label>
+                <input class="form-control" name="value" />
+            </div>
+
+            <div class="col-12 text-end">
+                <button class="btn btn-warning">Update</button>
+            </div>
+        </form>
+    </div>
+}
+
+<!-- 🔥 TABLE -->
 @if (ViewBag.Rows != null && ViewBag.Rows.Count > 0)
 {
-    <h3>Table Data</h3>
+    <div class="card p-4 shadow-sm">
+        <h5>Table Data</h5>
 
-    <table border="1" cellpadding="5">
-        <thead>
-            <tr>
-                @foreach (var col in ViewBag.Rows[0].Keys)
-                {
-                    <th>@col</th>
-                }
-            </tr>
-        </thead>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mt-3">
 
-        <tbody>
-            @foreach (var row in ViewBag.Rows)
-            {
-                <tr>
-                    @foreach (var val in row.Values)
+                <thead class="table-dark">
+                    <tr>
+                        @foreach (var col in ViewBag.Rows[0].Keys)
+                        {
+                            <th>@col</th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var row in ViewBag.Rows)
                     {
-                        <td>@val</td>
+                        <tr>
+                            @foreach (var val in row.Values)
+                            {
+                                <td>@val</td>
+                            }
+                        </tr>
                     }
-                </tr>
-            }
-        </tbody>
-    </table>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
 }
 else if (ViewBag.Operation == "select")
 {
-    <p>No data found</p>
+    <p class="text-muted">No data found</p>
 }
 

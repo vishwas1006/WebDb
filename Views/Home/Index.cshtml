@@ -1,15 +1,47 @@
-﻿@model WebDB.Models.DbConnectionModel
+﻿@{
+    ViewData["Title"] = "Connect to Database";
+}
 
-<h2>Connect to Database</h2>
+@model WebDB.Models.DbConnectionModel
 
-<form method="post">
+<div class="d-flex justify-content-center align-items-center" style="height:80vh;">
 
-    <input asp-for="Host" placeholder="Host"/>
-    <input asp-for="Database" placeholder="Database" />
-    <input asp-for="User" placeholder="User" />
-    <input asp-for="Password" placeholder="Password" />
+    <div class="card shadow-lg p-4" style="width:400px; border-radius:15px;">
 
-    <button type="submit">Connect</button>
-</form>
+        <h3 class="text-center mb-4">Connect to Database</h3>
 
-<p style="color:red">@ViewBag.Error</p>
+        <form method="post">
+
+            <div class="mb-3">
+                <input asp-for="Host" class="form-control" placeholder="Host" />
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="Database" class="form-control" placeholder="Database" />
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="User" class="form-control" placeholder="User" />
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+            </div>
+
+            
+
+
+
+            <button class="btn btn-primary w-100">Connect</button>
+
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3">@ViewBag.Error</div>
+        }
+
+    </div>
+
+</div>
+
